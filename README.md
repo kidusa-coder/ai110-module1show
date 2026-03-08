@@ -25,13 +25,27 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+- **Game's purpose:**  
+  The game is a number guessing game built with Streamlit where players try to guess a secret number within a range determined by the selected difficulty level (Easy: 1-20, Normal: 1-100, Hard: 1-50). Players have limited attempts based on difficulty, and the game provides hints ("Go HIGHER!" or "Go LOWER!") to guide them. The game tracks score based on attempts used, and includes features like high score persistence and guess history visualization.
+
+- **Bugs I found:**
+  - The secret number was resetting on every button click because session state initialization was not properly handled, causing the game to be unplayable.
+  - The hints were backwards: "Too High" showed "Go HIGHER!" instead of "Go LOWER!", and vice versa.
+  - Session state variables like history, score, and status were not initialized correctly, leading to KeyError exceptions.
+  - The attempts counter had an off-by-one error, starting at 1 instead of 0.
+  - Invalid guesses were not handled properly, and the game logic was mixed in the main app file instead of being modularized.
+
+- **Fixes I applied:**
+  - Moved game logic functions (get_range_for_difficulty, parse_guess, check_guess, update_score) to a separate logic_utils.py file for better organization and testability.
+  - Corrected the hint messages in check_guess to display the right directions.
+  - Fixed session state initialization by moving it to the appropriate places in the code execution order, ensuring variables persist across reruns.
+  - Adjusted the attempts counter initialization to start at 0.
+  - Added proper handling for invalid guesses and ensured the game state resets correctly on "New Game".
+  - Added two new features: High Score Tracker (saves best score to JSON) and Guess History with Progress Bars (visualizes guess closeness in the sidebar).
 
 ## 📸 Demo
 
-- [ ] [Insert a screenshot of your fixed, winning game here]
+![alt text](image-1.png)
 
 ## 🚀 Stretch Features
 
