@@ -4,26 +4,36 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 
 ## 1. What was broken when you started?
 
-- What did the game look like the first time you ran it?
-- List at least two concrete bugs you noticed at the start  
-  (for example: "the secret number kept changing" or "the hints were backwards").
+- **Bug 1: New Game doesn't fully reset the game**
+- Expected: Clicking "New Game" should reset everything and let me play again.
+- Actual: The "You already won" message never disappeared, and submitting a new guess did nothing.
+
+- **Bug 2: Attempts counter never updated**
+- Expected: Each time I submitted a guess, the attempts counter should
+  decrease by 1.
+- Actual: It stayed frozen at 8 the entire time, never reflecting my actual remaining attempts.
+
+- **Bug 3: Show Hint checkbox had no effect**
+- Expected: Toggling "Show Hint" on or off should control whether
+  I see feedback after guessing.
+- Actual: Whether checked or unchecked, no meaningful feedback appeared.
 
 ---
 
 ## 2. How did you use AI as a teammate?
 
-- Which AI tools did you use on this project (for example: ChatGPT, Gemini, Copilot)?
-- Give one example of an AI suggestion that was correct (including what the AI suggested and how you verified the result).
-- Give one example of an AI suggestion that was incorrect or misleading (including what the AI suggested and how you verified the result).
+- COpilot & Claude
+- Correct AI suggestion: Copilot correctly identified the 3 missing session state resets (status, score, history) consistently across 2 separate chat sessions.
+- Incorrect suggestion: In prompt 1, copilot suggested resetting to 1, but in prompt 3 it said attempts should be 0. It contradicted itself. I used claude to fix this error by moving attempts after validation.
 
 ---
 
 ## 3. Debugging and testing your fixes
 
-- How did you decide whether a bug was really fixed?
-- Describe at least one test you ran (manual or using pytest)  
-  and what it showed you about your code.
-- Did AI help you design or understand any tests? How?
+- Ran pytest with 5 tests, all passing after fixing the tuple return value mismatch in existing tests
+- Manually verified all fixes in the live streamlit app
+- conftest.py was needed to fix ModuleNotFoundError because pytest couldn't find logic_utils from the tests folder.
+- AI helped me generate the two new message checking tests.
 
 ---
 
