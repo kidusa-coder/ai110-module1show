@@ -1,3 +1,6 @@
+import json
+import os
+
 def get_range_for_difficulty(difficulty: str):
     if difficulty == "Easy":
         return 1, 20
@@ -61,3 +64,21 @@ def update_score(current_score: int, outcome: str, attempt_number: int):
         return current_score - 5
 
     return current_score
+
+
+# Feature 1: High Score Tracker
+# Helper function to load the high score from high_score.json
+def load_high_score():
+    if os.path.exists("high_score.json"):
+        with open("high_score.json", "r") as f:
+            data = json.load(f)
+            return data.get("high_score", 0)
+    return 0
+
+
+# Function to save the high score to high_score.json only if it beats the current high score
+def save_high_score(score):
+    current_high = load_high_score()
+    if score > current_high:
+        with open("high_score.json", "w") as f:
+            json.dump({"high_score": score}, f)

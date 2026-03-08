@@ -1,11 +1,24 @@
 import random
 import streamlit as st
-from logic_utils import get_range_for_difficulty, parse_guess, check_guess, update_score
+from logic_utils import get_range_for_difficulty, parse_guess, check_guess, update_score, load_high_score, save_high_score
+
+# --- Session State Initialization ---
+if "history" not in st.session_state:
+    st.session_state.history = []
+
+if "score" not in st.session_state:
+    st.session_state.score = 0
+
+if "status" not in st.session_state:
+    st.session_state.status = "playing"
+
+if "last_message" not in st.session_state:
+    st.session_state.last_message = ""
+
+if "attempts" not in st.session_state:
+    st.session_state.attempts = 0
 
 st.set_page_config(page_title="Glitchy Guesser", page_icon="🎮")
-
-st.title("🎮 Game Glitch Investigator")
-st.caption("An AI-generated guessing game. Something is off.")
 
 st.sidebar.header("Settings")
 
@@ -24,16 +37,28 @@ attempt_limit = attempt_limit_map[difficulty]
 
 low, high = get_range_for_difficulty(difficulty)
 
-st.sidebar.caption(f"Range: {low} to {high}")
-st.sidebar.caption(f"Attempts allowed: {attempt_limit}")
-
-# --- Session State Initialization ---
+# --- Session State Initialization (continued) ---
 if "secret" not in st.session_state:
     st.session_state.secret = random.randint(low, high)
 
 # FIX: Changed from 1 to 0 to fix off-by-one error in attempts counter
 if "attempts" not in st.session_state:
     st.session_state.attempts = 0
+
+st.sidebar.caption(f"Range: {low} to {high}")
+st.sidebar.caption(f"Attempts allowed: {attempt_limit}")
+
+# Feature 1: Display high score in sidebar
+st.sidebar.caption(f"High Score: {load_high_score()}")
+
+# Feature 2: Guess History Sidebar with Progress Bars
+st.sidebar.header("Guess History")
+valid_guesses = [g for g in st.session_state.history if isinstance(g, int)]
+for i, guess in enumerate(valid_guesses, 1):
+    # Calculate closeness: 1.0 means exact match, 0.0 means farthest
+    closeness = 1 - abs(guess - st.session_state.secret) / (high - low)
+    st.sidebar.progress(closeness)
+    st.sidebar.caption(f"Guess {i}: {guess}")
 
 if "score" not in st.session_state:
     st.session_state.score = 0
@@ -128,6 +153,8 @@ if submit:
         if outcome == "Win":
             st.balloons()
             st.session_state.status = "won"
+            # Feature 1: Save high score if beaten
+            save_high_score(st.session_state.score)
             st.success(
                 f"You won! The secret was {st.session_state.secret}. "
                 f"Final score: {st.session_state.score}"
